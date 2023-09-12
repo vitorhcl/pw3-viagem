@@ -29,4 +29,20 @@ public class ViagemController {
         Viagem inserida = repository.save(body);
         return inserida;
     }
+
+    @PutMapping("/{id}")
+    public Viagem atualizar(@RequestBody Viagem obj, @PathVariable Long id) {
+        Optional<Viagem> existe = buscarPorId(id);
+        if(existe.isPresent())
+            repository.save(obj);
+        return obj;
+    }
+
+    @DeleteMapping("/{id}")
+    public Optional<Viagem> excluir(@PathVariable Long id)
+    {
+        Optional<Viagem> encontrada = repository.findById(id);
+        repository.delete(encontrada);
+        return encontrada;
+    }
 }
