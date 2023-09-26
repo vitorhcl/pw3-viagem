@@ -1,3 +1,5 @@
+//Dupla: Vítor Henrique Cavalcante Lopes e Vinicius Faoro Soares
+
 package br.com.etechoracio.viagem.controller;
 
 import br.com.etechoracio.viagem.entity.Viagem;
@@ -17,14 +19,17 @@ public class ViagemController {
     private ViagemRepository repository;
 
     @GetMapping
-    public List<Viagem> buscarTodos() {
-        return repository.findAll();
+    public List<Viagem> buscarTodos(@RequestParam(required = false) String destino) {
+        if(destino == null)
+            return repository.findAll();
+        else
+            return repository.findByDestino(destino);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> buscarPorId(@PathVariable Long id) {
         Optional<Viagem> viagem = repository.findById(id);
-        if(viagem.isPresent())
+        if (viagem.isPresent())
             return ResponseEntity.ok(viagem.get());
         else
             return ResponseEntity.notFound().build();
@@ -37,10 +42,9 @@ public class ViagemController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> excluir(@PathVariable Long id)
-    {
+    public ResponseEntity<?> excluir(@PathVariable Long id) {
         Optional<Viagem> existe = repository.findById(id);
-        if(existe.isPresent()) {
+        if (existe.isPresent()) {
             repository.deleteById(id);
             return ResponseEntity.ok().build();
         } else
@@ -50,10 +54,10 @@ public class ViagemController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizar(@RequestBody Viagem obj, @PathVariable Long id) {
         ResponseEntity<Object> responseEntity = buscarPorId(id);
-        if(responseEntity.hasBody()) {
-            Viagem viagem = (Viagem)responseEntity.getBody();
+        if (responseEntity.hasBody()) {
+            Viagem viagem = (Viagem) responseEntity.getBody();
             repository.save(viagem);
-            return obj;
+            return ResponseEntity.ok(viagem);
         } else {
             return ResponseEntity.notFound().build();
         }
